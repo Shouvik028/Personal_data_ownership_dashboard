@@ -17,6 +17,7 @@ interface InMemoryEvent {
   tracker_domain: string;
   tracker_company?: string;
   tracker_category?: string;
+  tracker_risk_level?: string;
   timestamp: string;
 }
 
@@ -84,8 +85,7 @@ function lookupTracker(domain: string): TrackerEntry | null {
 function computePrivacyScore(events: InMemoryEvent[]): number {
   let score = 100;
   for (const event of events) {
-    const info = event.tracker_domain ? lookupTracker(event.tracker_domain) : null;
-    const risk = info?.risk_level ?? 'low';
+    const risk = event.tracker_risk_level ?? 'low';
     if (risk === 'high') score -= 5;
     else if (risk === 'medium') score -= 2;
     else score -= 1;
@@ -110,6 +110,7 @@ export class TrackerService {
       ...event,
       tracker_company: trackerInfo?.company ?? event.tracker_company,
       tracker_category: trackerInfo?.category ?? event.tracker_category,
+      tracker_risk_level: trackerInfo?.risk_level ?? event.tracker_risk_level,
     };
 
     if (this.useDb && this.model) {
@@ -129,6 +130,7 @@ export class TrackerService {
       tracker_domain: enrichedEvent.tracker_domain,
       tracker_company: enrichedEvent.tracker_company,
       tracker_category: enrichedEvent.tracker_category,
+      tracker_risk_level: enrichedEvent.tracker_risk_level,
       timestamp: enrichedEvent.timestamp || new Date().toISOString(),
     });
     return { success: true, event_id: id };
