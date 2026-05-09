@@ -3,7 +3,7 @@
   "name": "Privacy Data Ownership Dashboard",
   "version": "1.0.0",
   "description": "Detects trackers on websites you visit and sends data to your privacy dashboard.",
-  "permissions": ["webRequest", "storage", "tabs"],
+  "permissions": ["webRequest", "storage", "tabs", "webNavigation"],
   "host_permissions": ["<all_urls>"],
   "background": {
     "service_worker": "background.js"

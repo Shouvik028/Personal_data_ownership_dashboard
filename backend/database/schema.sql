@@ -13,6 +13,7 @@ CREATE TABLE IF NOT EXISTS tracker_events (
   tracker_domain VARCHAR(255) NOT NULL,
   tracker_company VARCHAR(255),
   tracker_category VARCHAR(100),
+  tracker_risk_level VARCHAR(50),
   timestamp TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 

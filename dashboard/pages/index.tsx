@@ -4,11 +4,6 @@ import StatCard from '../components/StatCard';
 import PrivacyScore from '../components/PrivacyScore';
 import { getStats, getTopCompanies, Stats, CompanyCount } from '../services/api';
 
-interface RecentEntry {
-  company: string;
-  count: number;
-}
-
 export default function Overview() {
   const [stats, setStats] = useState<Stats | null>(null);
   const [companies, setCompanies] = useState<CompanyCount[]>([]);

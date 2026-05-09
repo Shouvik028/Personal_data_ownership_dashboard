@@ -3,7 +3,6 @@ interface StatCardProps {
   value: string | number;
   subtitle?: string;
   icon?: string;
-  trend?: 'up' | 'down' | 'neutral';
   colorClass?: string;
 }
 

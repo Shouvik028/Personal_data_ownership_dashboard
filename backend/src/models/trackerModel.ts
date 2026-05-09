@@ -6,6 +6,7 @@ export interface TrackerEvent {
   tracker_domain: string;
   tracker_company?: string;
   tracker_category?: string;
+  tracker_risk_level?: string;
   timestamp?: string;
 }
 
@@ -50,8 +51,8 @@ export class TrackerModel {
 
   async insertEvent(event: TrackerEvent): Promise<number> {
     const query = `
-      INSERT INTO tracker_events (website, tracker_domain, tracker_company, tracker_category, timestamp)
-      VALUES ($1, $2, $3, $4, $5)
+      INSERT INTO tracker_events (website, tracker_domain, tracker_company, tracker_category, tracker_risk_level, timestamp)
+      VALUES ($1, $2, $3, $4, $5, $6)
       RETURNING event_id
     `;
     const values = [
@@ -59,6 +60,7 @@ export class TrackerModel {
       event.tracker_domain,
       event.tracker_company || null,
       event.tracker_category || null,
+      event.tracker_risk_level || null,
       event.timestamp || new Date().toISOString(),
     ];
     const result = await this.pool.query(query, values);
@@ -71,11 +73,10 @@ export class TrackerModel {
         COUNT(*)::text AS total_trackers_detected,
         COUNT(DISTINCT website)::text AS unique_websites,
         COUNT(DISTINCT tracker_company)::text AS unique_companies,
-        COALESCE(SUM(CASE WHEN t.risk_level = 'high' THEN 1 ELSE 0 END), 0)::text AS high_risk_count,
-        COALESCE(SUM(CASE WHEN t.risk_level = 'medium' THEN 1 ELSE 0 END), 0)::text AS medium_risk_count,
-        COALESCE(SUM(CASE WHEN t.risk_level = 'low' THEN 1 ELSE 0 END), 0)::text AS low_risk_count
-      FROM tracker_events te
-      LEFT JOIN trackers t ON te.tracker_domain = t.domain
+        COALESCE(SUM(CASE WHEN tracker_risk_level = 'high' THEN 1 ELSE 0 END), 0)::text AS high_risk_count,
+        COALESCE(SUM(CASE WHEN tracker_risk_level = 'medium' THEN 1 ELSE 0 END), 0)::text AS medium_risk_count,
+        COALESCE(SUM(CASE WHEN tracker_risk_level = 'low' THEN 1 ELSE 0 END), 0)::text AS low_risk_count
+      FROM tracker_events
     `;
     const result = await this.pool.query(query);
     return result.rows[0] as StatsRow;
